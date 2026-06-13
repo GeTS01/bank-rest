@@ -1,105 +1,122 @@
-<h1>🚀 Разработка Системы Управления Банковскими Картами</h1>
+# Bank Cards REST API
 
-<h2>📁 Стартовая структура</h2>
-  <p>
-    Проектная структура с директориями и описательными файлами (<code>README Controller.md</code>, <code>README Service.md</code> и т.д.) уже подготовлена.<br />
-    Все реализации нужно добавлять <strong>в соответствующие директории</strong>.
-  </p>
-  <p>
-    После завершения разработки <strong>временные README-файлы нужно удалить</strong>, чтобы они не попадали в итоговую сборку.
-  </p>
-  
-<h2>📝 Описание задачи</h2>
-  <p>Разработать backend-приложение на Java (Spring Boot) для управления банковскими картами:</p>
-  <ul>
-    <li>Создание и управление картами</li>
-    <li>Просмотр карт</li>
-    <li>Переводы между своими картами</li>
-  </ul>
+Backend-приложение для управления банковскими картами: JWT-аутентификация, ролевой доступ, CRUD карт, пользовательский просмотр своих карт, запрос блокировки и переводы между собственными картами.
 
-<h2>💳 Атрибуты карты</h2>
-  <ul>
-    <li>Номер карты (зашифрован, отображается маской: <code>**** **** **** 1234</code>)</li>
-    <li>Владелец</li>
-    <li>Срок действия</li>
-    <li>Статус: Активна, Заблокирована, Истек срок</li>
-    <li>Баланс</li>
-  </ul>
+## Технологии
 
-<h2>🧾 Требования</h2>
+- Java 17
+- Spring Boot 3
+- Spring Security + JWT
+- Spring Data JPA
+- PostgreSQL
+- Liquibase
+- Swagger UI / OpenAPI
+- Docker Compose
+- JUnit 5 / Mockito
 
-<h3>✅ Аутентификация и авторизация</h3>
-  <ul>
-    <li>Spring Security + JWT</li>
-    <li>Роли: <code>ADMIN</code> и <code>USER</code></li>
-  </ul>
+## Быстрый запуск
 
-<h3>✅ Возможности</h3>
-<strong>Администратор:</strong>
-  <ul>
-    <li>Создаёт, блокирует, активирует, удаляет карты</li>
-    <li>Управляет пользователями</li>
-    <li>Видит все карты</li>
-  </ul>
+```bash
+docker compose up --build
+```
 
-<strong>Пользователь:</strong>
-  <ul>
-    <li>Просматривает свои карты (поиск + пагинация)</li>
-    <li>Запрашивает блокировку карты</li>
-    <li>Делает переводы между своими картами</li>
-    <li>Смотрит баланс</li>
-  </ul>
+Приложение будет доступно на `http://localhost:8080`.
 
-<h3>✅ API</h3>
-  <ul>
-    <li>CRUD для карт</li>
-    <li>Переводы между своими картами</li>
-    <li>Фильтрация и постраничная выдача</li>
-    <li>Валидация и сообщения об ошибках</li>
-  </ul>
+Swagger UI:
 
-<h3>✅ Безопасность</h3>
-  <ul>
-    <li>Шифрование данных</li>
-    <li>Ролевой доступ</li>
-    <li>Маскирование номеров карт</li>
-  </ul>
+```text
+http://localhost:8080/swagger-ui.html
+```
 
-<h3>✅ Работа с БД</h3>
-  <ul>
-    <li>PostgreSQL или MySQL</li>
-    <li>Миграции через Liquibase (<code>src/main/resources/db/migration</code>)</li>
-  </ul>
+OpenAPI-файл:
 
-<h3>✅ Документация</h3>
-  <ul>
-    <li>Swagger UI / OpenAPI — <code>docs/openapi.yaml</code></li>
-    <li><code>README.md</code> с инструкцией запуска</li>
-  </ul>
+```text
+docs/openapi.yaml
+```
 
-<h3>✅ Развёртывание и тестирование</h3>
-  <ul>
-    <li>Docker Compose для dev-среды</li>
-    <li>Liquibase миграции</li>
-    <li>Юнит-тесты ключевой бизнес-логики</li>
-  </ul>
+## Demo-пользователи
 
-<h2>📊 Оценка</h2>
-  <ul>
-    <li>Соответствие требованиям</li>
-    <li>Чистота архитектуры и кода</li>
-    <li>Безопасность</li>
-    <li>Обработка ошибок</li>
-    <li>Покрытие тестами</li>
-    <li>ООП и уровни абстракции</li>
-  </ul>
+При первом запуске создаются два пользователя:
 
-<h2>💡 Технологии</h2>
-  <p>
-    Java 17+, Spring Boot, Spring Security, Spring Data JPA, PostgreSQL/MySQL, Liquibase, Docker, JWT, Swagger (OpenAPI)
-  </p>
+| Роль | Логин | Пароль |
+| --- | --- | --- |
+| ADMIN | `admin` | `admin12345` |
+| USER | `user` | `user12345` |
 
-<h2> 📤 Формат сдачи</h2>
-<p>
-Весь код и изменения принимаются только через git-репозиторий с открытым доступом к проекту. Отправка файлов в любом виде не принимается.
-  </p>
+В production-сценарии значения `JWT_SECRET` и `CARD_ENCRYPTION_KEY` нужно обязательно заменить через переменные окружения.
+
+## Локальный запуск без Docker app-сервиса
+
+Поднять только PostgreSQL:
+
+```bash
+docker compose up postgres
+```
+
+Запустить приложение:
+
+```bash
+mvn spring-boot:run
+```
+
+## Аутентификация
+
+Получить JWT:
+
+```bash
+curl -X POST http://localhost:8080/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"admin","password":"admin12345"}'
+```
+
+Дальше передавать токен:
+
+```text
+Authorization: Bearer <token>
+```
+
+## Основные endpoints
+
+### Auth
+
+- `POST /api/auth/login` - получение JWT
+
+### ADMIN
+
+- `POST /api/admin/users` - создать пользователя
+- `GET /api/admin/users` - список пользователей с поиском и пагинацией
+- `GET /api/admin/users/{id}` - получить пользователя
+- `PATCH /api/admin/users/{id}` - обновить пользователя
+- `DELETE /api/admin/users/{id}` - удалить пользователя
+- `POST /api/admin/cards` - создать карту
+- `GET /api/admin/cards` - список всех карт с фильтрами
+- `GET /api/admin/cards/{id}` - получить карту
+- `PATCH /api/admin/cards/{id}/status` - изменить статус
+- `PATCH /api/admin/cards/{id}/block` - заблокировать карту
+- `PATCH /api/admin/cards/{id}/activate` - активировать карту
+- `DELETE /api/admin/cards/{id}` - удалить карту
+
+### USER
+
+- `GET /api/cards` - список своих карт с поиском, фильтром статуса и пагинацией
+- `GET /api/cards/{id}` - получить свою карту
+- `GET /api/cards/{id}/balance` - посмотреть баланс
+- `PATCH /api/cards/{id}/request-block` - запросить блокировку карты
+- `POST /api/transfers` - перевод между своими активными картами
+
+## Безопасность
+
+- Полный номер карты не возвращается из API.
+- Номер карты хранится в БД в зашифрованном виде через AES-GCM.
+- Для уникальности номера используется SHA-256 hash.
+- В API отображается только маска вида `**** **** **** 1234`.
+- Переводы разрешены только между картами текущего пользователя.
+- Административные endpoints доступны только роли `ADMIN`.
+
+## Тесты
+
+```bash
+mvn test
+```
+
+Покрыта ключевая бизнес-логика переводов, маскирование и шифрование номеров карт.
